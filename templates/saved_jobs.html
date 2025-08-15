@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Saved Jobs</h2>
+    {% if jobs and jobs|length > 0 %}
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-8 offset-md-2 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company }} | {{ job.location }}</h6>
+                        <p class="card-text">{{ job.description[:150] }}{% if job.description and job.description|length > 150 %}...{% endif %}</p>
+                        <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-outline">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have not saved any jobs yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

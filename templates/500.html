@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - BranchLogic{% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        text-align: center;
+        padding: 4rem 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-code {
+        font-size: 8rem;
+        font-weight: 900;
+        color: #dc2626;
+        margin-bottom: 1rem;
+        line-height: 1;
+    }
+    
+    .error-title {
+        font-size: 2rem;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    
+    .error-message {
+        font-size: 1.1rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+    }
+    
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-code">500</div>
+    <h1 class="error-title">Server Error</h1>
+    <p class="error-message">
+        Something went wrong on our end. We're working to fix this issue. Please try again later.
+    </p>
+    <div class="error-actions">
+        <a href="{{ url_for('home') }}" class="btn btn-primary">Go Home</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+    </div>
+</div>
+{% endblock %}

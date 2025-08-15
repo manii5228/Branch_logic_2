@@ -1,0 +1,749 @@
+<!-- Blog section and modal removed: now available at /blog -->
+        </div>
+        </div>
+    </div>
+</section>
+<script>
+// Show/hide blog section on Blog link click
+document.addEventListener('DOMContentLoaded', function() {
+    var blogSection = document.getElementById('blog');
+    var blogLinks = Array.from(document.querySelectorAll('a[href="#blog"]'));
+    blogLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (blogSection.style.display === 'none' || blogSection.style.display === '') {
+                blogSection.style.display = 'block';
+                blogSection.scrollIntoView({behavior:'smooth'});
+            } else {
+                blogSection.style.display = 'none';
+            }
+        });
+    });
+    // Blog card hover animation
+    document.querySelectorAll('.blog-card').forEach(function(card) {
+        card.addEventListener('mouseenter', function() {
+            card.style.transform = 'translateY(-8px) scale(1.03)';
+            card.style.boxShadow = '0 8px 24px rgba(37,99,235,0.13)';
+        });
+        card.addEventListener('mouseleave', function() {
+            card.style.transform = '';
+            card.style.boxShadow = '';
+        });
+    });
+
+    // Blog popup modal logic
+    var blogs = [
+        {title:'How to Stand Out in Your Job Search',author:'Admin',date:'Aug 2025',category:'Career Tips',desc:'Discover actionable strategies to make your job application shine and impress recruiters in a competitive market.'},
+        {title:'Top Skills Employers Look For in 2025',author:'Team BranchLogic',date:'Jul 2025',category:'Hiring Trends',desc:'Explore the most in-demand skills and how you can develop them to boost your employability this year.'},
+        {title:'Remote Work: Building a Productive Home Office',author:'Guest Author',date:'Jun 2025',category:'Remote Work',desc:'Tips and tricks to create a workspace at home that keeps you motivated, focused, and healthy.'},
+        {title:'Mastering the Interview: Tips for Success',author:'HR Expert',date:'May 2025',category:'Interviews',desc:'Ace your next interview with these proven techniques and confidence boosters.'},
+        {title:'Resume Mistakes to Avoid',author:'Recruiter',date:'Apr 2025',category:'Resumes',desc:'Common resume pitfalls and how to fix them for better job opportunities.'},
+        {title:'Networking for Career Growth',author:'Career Coach',date:'Mar 2025',category:'Networking',desc:'Build meaningful connections that can help you land your dream job.'},
+        {title:'The Future of Work: Trends to Watch',author:'Industry Analyst',date:'Feb 2025',category:'Trends',desc:'Stay ahead of the curve with insights into the evolving job market.'},
+        {title:'Balancing Work and Life',author:'Wellness Expert',date:'Jan 2025',category:'Wellness',desc:'Strategies for maintaining a healthy work-life balance in a busy world.'},
+        {title:'How to Negotiate Your Salary',author:'Finance Advisor',date:'Dec 2024',category:'Salary',desc:'Get the pay you deserve with these negotiation tips.'},
+        {title:'Building Your Personal Brand Online',author:'Brand Strategist',date:'Nov 2024',category:'Branding',desc:'Leverage social media and online tools to stand out professionally.'},
+        {title:'Landing Your First Internship',author:'Student Mentor',date:'Oct 2024',category:'Internships',desc:'A step-by-step guide to securing valuable internship experience.'},
+        {title:'Job Search During a Recession',author:'Economist',date:'Sep 2024',category:'Economy',desc:'How to adapt your job search strategy in tough economic times.'}
+    ];
+    var blogModal = document.getElementById('blog-modal');
+    var blogModalTitle = document.getElementById('blog-modal-title');
+    var blogModalMeta = document.getElementById('blog-modal-meta');
+    var blogModalDesc = document.getElementById('blog-modal-desc');
+    var blogModalClose = document.getElementById('blog-modal-close');
+    function openBlogModal(idx) {
+        var blog = blogs[idx];
+        blogModalTitle.textContent = blog.title;
+        blogModalMeta.textContent = 'by ' + blog.author + ' | ' + blog.date + ' | ' + blog.category;
+        blogModalDesc.textContent = blog.desc;
+        blogModal.style.display = 'flex';
+    }
+    document.querySelectorAll('.blog-popup-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var idx = this.getAttribute('data-blog-idx');
+            openBlogModal(idx);
+        });
+    });
+    blogModalClose.addEventListener('click', function() {
+        blogModal.style.display = 'none';
+    });
+    blogModal.addEventListener('click', function(e) {
+        if (e.target === blogModal) blogModal.style.display = 'none';
+    });
+});
+</script>
+{% extends "base.html" %}
+{% block hero %}
+    <section class="main-hero" style="background: linear-gradient(120deg, #f8fafc 70%, #e0e7ff 100%); border-bottom: 1px solid #e5e7eb; position: relative; overflow: hidden;">
+        <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2.5rem; padding: 3.5rem 0 2.5rem 0; position: relative;">
+            <div style="flex: 1 1 340px; min-width: 260px; max-width: 500px; z-index: 2;">
+                <h1 style="font-size: 2.7rem; color: #22223b; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1.5px;">Welcome to BranchLogic</h1>
+                <p style="font-size: 1.18rem; color: #4a4e69; opacity: 0.92; margin-bottom: 1.7rem;">Find your dream job, connect with top employers, and take the next step in your career journey. <span style="color:#2563eb;font-weight:600;">Your future starts here.</span></p>
+            </div>
+            <div style="flex: 1 1 340px; min-width: 260px; max-width: 420px; display: flex; justify-content: center; z-index: 2;">
+                <img src="{{ url_for('static', filename='images/02.jpg') }}" alt="Professional Teamwork" style="width: 100%; max-width: 400px; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); object-fit: cover; background: #e0e7ff;">
+            </div>
+            <!-- Decorative shapes -->
+            <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; left: -60px; top: 10px; z-index: 1; opacity: 0.13;">
+                <circle cx="90" cy="90" r="90" fill="#2563eb"/>
+            </svg>
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; right: -40px; bottom: 0; z-index: 1; opacity: 0.10;">
+                <rect width="120" height="120" rx="40" fill="#764ba2"/>
+            </svg>
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; left: 30%; top: 0; z-index: 1; opacity: 0.10;">
+                <circle cx="30" cy="30" r="30" fill="#fbbf24"/>
+            </svg>
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; right: 10%; top: 10px; z-index: 1; opacity: 0.08;">
+                <ellipse cx="50" cy="50" rx="50" ry="30" fill="#2563eb"/>
+            </svg>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; left: 10%; bottom: 10px; z-index: 1; opacity: 0.09;">
+                <rect width="80" height="80" rx="20" fill="#764ba2"/>
+            </svg>
+        </div>
+    </section>
+{% endblock %}
+
+{% block title %}BranchLogic - Find Your Dream Job{% endblock %}
+
+{% block content %}
+
+<style>
+    /* All home page CSS restored, no broken tags */
+    .search-container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 800px;
+    }
+    .search-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+        margin-bottom: 1rem;
+    }
+    .search-input {
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+    }
+    .search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+    .search-btn {
+        background: #fbbf24;
+        color: #1f2937;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .search-btn:hover {
+        background: #f59e0b;
+        transform: translateY(-2px);
+    }
+    .search-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    .stat-item {
+        text-align: center;
+    }
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fbbf24;
+        display: block;
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    /* Featured Jobs */
+    .featured-jobs {
+        padding: 4rem 0;
+        background: #f8fafc;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .section-title {
+        font-size: 2.5rem;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #6b7280;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .job-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+        border: 1px solid #e5e7eb;
+    }
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    .job-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    .job-company {
+        color: #6b7280;
+        font-weight: 500;
+    }
+    .urgent-badge {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .job-details {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .job-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    .job-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+    .job-tag {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    .job-meta {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    .apply-btn {
+        background: #2563eb;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .apply-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+    /* Categories */
+    .categories {
+        padding: 4rem 0;
+    }
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    .category-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+        border: 1px solid #e5e7eb;
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .category-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .category-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    .category-count {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    /* Company Logos */
+    .company-logos {
+        padding: 4rem 0;
+        background: #f8fafc;
+    }
+    .logos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 2rem;
+        align-items: center;
+        justify-items: center;
+    }
+    .logo-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80px;
+    }
+    .logo-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6b7280;
+    }
+    /* Testimonials */
+    .testimonials {
+        padding: 4rem 0;
+    }
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    .testimonial-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+    .testimonial-text {
+        font-style: italic;
+        color: #4b5563;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        font-weight: 600;
+    }
+    .author-info h4 {
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+    .author-info p {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    /* Newsletter */
+    .newsletter {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+    }
+    .newsletter h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    .newsletter p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .newsletter-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 500px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .newsletter-input {
+        flex: 1;
+        min-width: 250px;
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        color: #333;
+    }
+    .newsletter-btn {
+        background: #fbbf24;
+        color: #1f2937;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .newsletter-btn:hover {
+        background: #f59e0b;
+        transform: translateY(-2px);
+    }
+    /* FAQ */
+    .faq {
+        padding: 4rem 0;
+        background: #f8fafc;
+    }
+    .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+    .faq-item {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+    .faq-question {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    .faq-answer {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+        .search-form {
+            grid-template-columns: 1fr;
+        }
+        .stats {
+            gap: 2rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+        }
+        .newsletter-form {
+            flex-direction: column;
+            align-items: center;
+        }
+        .newsletter-input {
+            min-width: 100%;
+        }
+    }
+</style>
+
+
+
+<!-- Top Categories -->
+<section class="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Popular Job Categories</h2>
+            <p class="section-subtitle">Explore jobs in your field of interest</p>
+        </div>
+        
+        <div class="category-grid">
+            {% if categories %}
+                {% for category in categories[:6] %}
+                <div class="category-card">
+                    <div class="category-icon">
+                        {% if 'tech' in category.lower() or 'software' in category.lower() %}💻
+                        {% elif 'design' in category.lower() or 'creative' in category.lower() %}🎨
+                        {% elif 'marketing' in category.lower() %}📈
+                        {% elif 'sales' in category.lower() %}💰
+                        {% elif 'finance' in category.lower() or 'accounting' in category.lower() %}🏦
+                        {% elif 'health' in category.lower() or 'medical' in category.lower() %}🏥
+                        {% else %}💼{% endif %}
+                    </div>
+                    <div class="category-name">{{ category }}</div>
+                    <div class="category-count">
+                        {% set job_count = namespace(value=0) %}
+                        {% for job in featured_jobs if job.category == category %}
+                            {% set job_count.value = job_count.value + 1 %}
+                        {% endfor %}
+                        {{ job_count.value }}+ jobs
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="category-card">
+                    <div class="category-icon">💻</div>
+                    <div class="category-name">Technology</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🎨</div>
+                    <div class="category-name">Design</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">📈</div>
+                    <div class="category-name">Marketing</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">💰</div>
+                    <div class="category-name">Sales</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🏦</div>
+                    <div class="category-name">Finance</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🏥</div>
+                    <div class="category-name">Healthcare</div>
+                    <div class="category-count">Coming Soon</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Jobs -->
+<section class="featured-jobs">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Jobs</h2>
+            <p class="section-subtitle">Hand-picked opportunities from top companies</p>
+        </div>
+        
+        <div class="grid grid-3">
+            {% for job in featured_jobs %}
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">{{ job.title }}</h3>
+                        <p class="job-company">{{ job.company }}</p>
+                    </div>
+                    {% if job.urgent %}
+                    <span class="urgent-badge">Urgent</span>
+                    {% endif %}
+                </div>
+                
+                <div class="job-details">
+                    <span class="job-detail">📍 {{ job.location }}</span>
+                    <span class="job-detail">💼 {{ job.job_type }}</span>
+                    {% if job.remote %}
+                    <span class="job-detail">🏠 Remote</span>
+                    {% endif %}
+                    <span class="job-detail">💰 {{ job.salary }}</span>
+                </div>
+                
+                {% if job.tags %}
+                <div class="job-tags">
+                    {% for tag in job.tags.split(',') %}
+                    <span class="job-tag">{{ tag.strip() }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="job-footer">
+                    <span class="job-meta">Posted {{ job.posted_at.strftime('%b %d') }} • {{ job.applications_count }} applications</span>
+                    <a href="{{ url_for('job_detail', job_id=job.id) }}" class="apply-btn">View Job</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-6">
+            <a href="{{ url_for('jobs') }}" class="btn btn-primary">View All Jobs</a>
+        </div>
+    </div>
+</section>
+
+<!-- Company Logos -->
+<section class="company-logos">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Trusted by Top Companies</h2>
+            <p class="section-subtitle">Join thousands of companies hiring on BranchLogic</p>
+        </div>
+        
+        <div class="logos-grid">
+            <div class="logo-item">
+                <div class="logo-text">TechCorp</div>
+            </div>
+            <div class="logo-item">
+                <div class="logo-text">Design Studio</div>
+            </div>
+            <div class="logo-item">
+                <div class="logo-text">CloudTech</div>
+            </div>
+            <div class="logo-item">
+                <div class="logo-text">Innovate Inc</div>
+            </div>
+            <div class="logo-item">
+                <div class="logo-text">Global Solutions</div>
+            </div>
+            <div class="logo-item">
+                <div class="logo-text">Future Corp</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">What People Say</h2>
+            <p class="section-subtitle">Success stories from job seekers and employers</p>
+        </div>
+        
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"BranchLogic helped me find my dream job in just 2 weeks. The platform is incredibly user-friendly and the job matching is spot-on!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JS</div>
+                    <div class="author-info">
+                        <h4>John Smith</h4>
+                        <p>Senior Developer at TechCorp</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"As an employer, I've found amazing talent through BranchLogic. The quality of candidates and ease of posting jobs is outstanding."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SJ</div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>HR Manager at Design Studio</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"The remote job options and detailed company profiles made it easy to find the perfect role that fits my lifestyle."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ML</div>
+                    <div class="author-info">
+                        <h4>Mike Lee</h4>
+                        <p>Product Manager at CloudTech</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+    <div class="container">
+        <h2>Stay Updated with Latest Jobs</h2>
+        <p>Get notified about new opportunities that match your skills and preferences</p>
+        
+        <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email address" class="newsletter-input" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about BranchLogic</p>
+        </div>
+        
+        <div class="faq-grid">
+            <div class="faq-item">
+                <h3 class="faq-question">How do I apply for a job?</h3>
+                <p class="faq-answer">Simply click on any job listing, review the details, and click the "Apply Now" button. You'll need to create an account and upload your resume.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Is it free to use BranchLogic?</h3>
+                <p class="faq-answer">Yes! Job seekers can browse and apply to jobs completely free. Employers pay a small fee to post job listings.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">How do I post a job as an employer?</h3>
+                <p class="faq-answer">Sign up as an employer, complete your company profile, and use the "Post Job" feature to create detailed job listings.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Can I search for remote jobs only?</h3>
+                <p class="faq-answer">Absolutely! Use the remote filter in the search bar to find only remote or work-from-home opportunities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

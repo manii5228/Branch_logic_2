@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Edit Job - BranchLogic{% endblock %}
+{% block content %}
+<style>
+    .post-job-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+    }
+    .post-job-content {
+        padding: 3rem 0;
+    }
+    .post-job-form {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+    .section-title {
+        font-size: 1.5rem;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+    .form-input {
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background: #f9fafb;
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    .form-select {
+        background: white;
+        cursor: pointer;
+    }
+    .form-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    .form-checkbox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #2563eb;
+    }
+    .form-checkbox label {
+        font-size: 0.95rem;
+        color: #374151;
+        cursor: pointer;
+    }
+    .form-help {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+    }
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+    }
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-2px);
+    }
+    @media (max-width: 768px) {
+        .post-job-form {
+            padding: 2rem;
+            margin: 1rem;
+        }
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+        .post-job-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+<section class="post-job-header">
+    <div class="container">
+        <h1>Edit Job</h1>
+        <p>Update your job listing details below</p>
+    </div>
+</section>
+<section class="post-job-content">
+    <div class="container">
+        <form method="POST" class="post-job-form">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2 class="section-title">Basic Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title" class="form-label">Job Title *</label>
+                        <input type="text" id="title" name="title" class="form-input" required value="{{ job.title }}" placeholder="e.g., Senior Frontend Developer">
+                        <div class="form-help">Use a clear, specific title that candidates search for</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="company" class="form-label">Company Name *</label>
+                        <input type="text" id="company" name="company" class="form-input" required value="{{ job.company }}" placeholder="e.g., TechCorp Inc.">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="location" class="form-label">Location *</label>
+                        <input type="text" id="location" name="location" class="form-input" required value="{{ job.location }}" placeholder="e.g., San Francisco, CA">
+                    </div>
+                    <div class="form-group">
+                        <label for="job_type" class="form-label">Job Type *</label>
+                        <select id="job_type" name="job_type" class="form-input form-select" required>
+                            <option value="">Select job type</option>
+                            <option value="Full-time" {% if job.job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                            <option value="Part-time" {% if job.job_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                            <option value="Contract" {% if job.job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                            <option value="Internship" {% if job.job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                            <option value="Freelance" {% if job.job_type == 'Freelance' %}selected{% endif %}>Freelance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category *</label>
+                        <select id="category" name="category" class="form-input form-select" required>
+                            <option value="">Select category</option>
+                            <option value="technology" {% if job.category == 'technology' %}selected{% endif %}>Technology</option>
+                            <option value="design" {% if job.category == 'design' %}selected{% endif %}>Design</option>
+                            <option value="marketing" {% if job.category == 'marketing' %}selected{% endif %}>Marketing</option>
+                            <option value="sales" {% if job.category == 'sales' %}selected{% endif %}>Sales</option>
+                            <option value="finance" {% if job.category == 'finance' %}selected{% endif %}>Finance</option>
+                            <option value="healthcare" {% if job.category == 'healthcare' %}selected{% endif %}>Healthcare</option>
+                            <option value="education" {% if job.category == 'education' %}selected{% endif %}>Education</option>
+                            <option value="other" {% if job.category == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="salary" class="form-label">Salary Range</label>
+                        <input type="text" id="salary" name="salary" class="form-input" value="{{ job.salary }}" placeholder="e.g., $80k - $120k">
+                        <div class="form-help">Including salary can increase application rates</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="remote" name="remote" {% if job.remote %}checked{% endif %}>
+                        <label for="remote">This is a remote position</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="urgent" name="urgent" {% if job.urgent %}checked{% endif %}>
+                        <label for="urgent">Mark as urgent hiring</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Job Description -->
+            <div class="form-section">
+                <h2 class="section-title">Job Description</h2>
+                <div class="form-group full-width">
+                    <label for="description" class="form-label">Job Description *</label>
+                    <textarea id="description" name="description" class="form-input form-textarea" required placeholder="Provide a detailed description of the role, responsibilities, and what makes this position exciting...">{{ job.description }}</textarea>
+                    <div class="form-help">Describe the role, responsibilities, and what makes this position exciting. Be specific about what the candidate will do.</div>
+                </div>
+            </div>
+            <!-- Requirements -->
+            <div class="form-section">
+                <h2 class="section-title">Requirements & Skills</h2>
+                <div class="form-group full-width">
+                    <label for="requirements" class="form-label">Requirements</label>
+                    <textarea id="requirements" name="requirements" class="form-input form-textarea" placeholder="List the key requirements and qualifications for this position...">{{ job.requirements }}</textarea>
+                    <div class="form-help">List the key requirements, qualifications, and skills needed. Use bullet points for clarity.</div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="tags" class="form-label">Skills & Tags</label>
+                    <input type="text" id="tags" name="tags" class="form-input" value="{{ job.tags }}" placeholder="e.g., React, Python, AWS, Project Management">
+                    <div class="form-help">Separate skills and tags with commas. These help candidates find your job.</div>
+                </div>
+            </div>
+            <!-- Benefits -->
+            <div class="form-section">
+                <h2 class="section-title">Benefits & Perks</h2>
+                <div class="form-group full-width">
+                    <label for="benefits" class="form-label">Benefits & Perks</label>
+                    <textarea id="benefits" name="benefits" class="form-input form-textarea" placeholder="List the benefits, perks, and what makes your company a great place to work...">{{ job.benefits }}</textarea>
+                    <div class="form-help">Highlight what makes your company attractive: health insurance, flexible hours, professional development, etc.</div>
+                </div>
+            </div>
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Job</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

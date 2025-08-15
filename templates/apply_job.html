@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for {{ job.title }} - BranchLogic{% endblock %}
+
+{% block content %}
+<style>
+    .apply-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+    }
+
+    .apply-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .apply-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .apply-content {
+        padding: 3rem 0;
+    }
+
+    .apply-container {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 3rem;
+    }
+
+    .apply-form {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .form-title {
+        font-size: 1.75rem;
+        color: #1f2937;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        color: #374151;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background: #f9fafb;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-file {
+        padding: 0.75rem;
+        border: 2px dashed #d1d5db;
+        border-radius: 10px;
+        text-align: center;
+        background: #f9fafb;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .form-file:hover {
+        border-color: #2563eb;
+        background: #f0f9ff;
+    }
+
+    .form-file input[type="file"] {
+        display: none;
+    }
+
+    .file-label {
+        color: #6b7280;
+        cursor: pointer;
+    }
+
+    .file-label strong {
+        color: #2563eb;
+    }
+
+    .form-help {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-2px);
+    }
+
+    .job-summary {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .job-summary h3 {
+        font-size: 1.5rem;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .job-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-info h4 {
+        font-size: 1.1rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .urgent-badge {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .company-info {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .company-info h4 {
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .company-details {
+        color: #6b7280;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .company-details p {
+        margin-bottom: 0.5rem;
+    }
+
+    .company-details p:last-child {
+        margin-bottom: 0;
+    }
+
+    .application-tips {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .application-tips h4 {
+        color: #0369a1;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .application-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .application-tips li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #bae6fd;
+        position: relative;
+        padding-left: 1.5rem;
+        color: #0369a1;
+        font-size: 0.9rem;
+    }
+
+    .application-tips li:before {
+        content: "💡";
+        position: absolute;
+        left: 0;
+    }
+
+    .application-tips li:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 1024px) {
+        .apply-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .job-summary {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .apply-form {
+            padding: 2rem;
+            margin: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .apply-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Apply Header -->
+<section class="apply-header">
+    <div class="container">
+        <h1>Apply for {{ job.title }}</h1>
+        <p>Submit your application to join {{ job.company }}</p>
+    </div>
+</section>
+
+<!-- Apply Content -->
+<section class="apply-content">
+    <div class="container">
+        <div class="apply-container">
+            <!-- Application Form -->
+            <div class="apply-form">
+                <h2 class="form-title">Application Form</h2>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">Personal Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="applicant_name" class="form-label">Full Name</label>
+                            <input type="text" id="applicant_name" name="applicant_name" class="form-input" value="{{ current_user.first_name }} {{ current_user.last_name }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="applicant_email" class="form-label">Email Address</label>
+                            <input type="email" id="applicant_email" name="applicant_email" class="form-input" value="{{ current_user.email }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Resume Upload -->
+                    <div class="form-section">
+                        <h3 class="section-title">Resume & Documents</h3>
+                        
+                        <div class="form-group">
+                            <label for="resume" class="form-label">Resume/CV</label>
+                            <input type="file" id="resume" name="resume">
+                            <div class="form-help">Upload your most recent resume. All file formats are accepted.</div>
+                        </div>
+                    </div>
+
+                    <!-- Cover Letter -->
+                    <div class="form-section">
+                        <h3 class="section-title">Cover Letter</h3>
+                        
+                        <div class="form-group">
+                            <label for="cover_letter" class="form-label">Cover Letter</label>
+                            <textarea id="cover_letter" name="cover_letter" class="form-input form-textarea" placeholder="Write a compelling cover letter explaining why you're interested in this position and how your skills align with the job requirements..."></textarea>
+                            <div class="form-help">A well-written cover letter can significantly increase your chances of getting an interview. Explain why you're interested in this role and how your experience matches the requirements.</div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">Additional Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="portfolio" class="form-label">Portfolio/Website</label>
+                            <input type="url" id="portfolio" name="portfolio" class="form-input" placeholder="https://your-portfolio.com">
+                            <div class="form-help">If you have a portfolio, website, or GitHub profile, include it here to showcase your work.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                            <input type="url" id="linkedin" name="linkedin" class="form-input" placeholder="https://linkedin.com/in/your-profile">
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Job Summary Sidebar -->
+            <div class="job-summary">
+                <h3>Job Summary</h3>
+                
+                {% if job.urgent %}
+                <span class="urgent-badge">🚨 Urgent Hiring</span>
+                {% endif %}
+                
+                <div class="job-info">
+                    <h4>{{ job.title }}</h4>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">{{ job.company }}</p>
+                    
+                    <div class="job-meta">
+                        <div class="meta-item">
+                            <span>📍</span>
+                            <span>{{ job.location }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>💼</span>
+                            <span>{{ job.job_type }}</span>
+                        </div>
+                        {% if job.remote %}
+                        <div class="meta-item">
+                            <span>🏠</span>
+                            <span>Remote</span>
+                        </div>
+                        {% endif %}
+                        {% if job.salary %}
+                        <div class="meta-item">
+                            <span>💰</span>
+                            <span>{{ job.salary }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="meta-item">
+                            <span>📅</span>
+                            <span>Posted {{ job.posted_at.strftime('%b %d, %Y') }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>👥</span>
+                            <span>{{ job.applications_count }} applications</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-info">
+                    <h4>About {{ job.company }}</h4>
+                    <div class="company-details">
+                        <p><strong>Location:</strong> {{ job.location }}</p>
+                        <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+                        {% if job.remote %}
+                        <p><strong>Work Mode:</strong> Remote-friendly</p>
+                        {% endif %}
+                        <p><strong>Category:</strong> {{ job.category|title }}</p>
+                    </div>
+                </div>
+
+                <div class="application-tips">
+                    <h4>💡 Application Tips</h4>
+                    <ul>
+                        <li>Customize your cover letter for this specific role</li>
+                        <li>Highlight relevant skills and experience</li>
+                        <li>Keep your resume concise and focused</li>
+                        <li>Proofread everything before submitting</li>
+                        <li>Follow up within a week if you don't hear back</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

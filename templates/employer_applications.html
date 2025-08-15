@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Applications - BranchLogic{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>📋 Manage Applications</h1>
+        <p>Review and manage applications for your job postings</p>
+    </div>
+
+    {% if applications %}
+        <div class="applications-grid">
+            {% for application in applications %}
+            <div class="application-card">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h3>{{ application.applicant_name }}</h3>
+                        <p class="job-title">{{ application.job_title }}</p>
+                        <p class="email">{{ application.applicant_email }}</p>
+                    </div>
+                    <div class="status-badge status-{{ application.status }}">
+                        {{ application.status|title }}
+                    </div>
+                </div>
+                
+                <div class="application-details">
+                    <div class="detail-item">
+                        <span class="label">Applied:</span>
+                        <span class="value">{{ application.applied_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    {% if application.rating %}
+                    <div class="detail-item">
+                        <span class="label">Rating:</span>
+                        <span class="value">
+                            {% for i in range(application.rating) %}⭐{% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if application.cover_letter %}
+                <div class="cover-letter">
+                    <h4>Cover Letter</h4>
+                    <p>{{ application.cover_letter[:200] }}{% if application.cover_letter|length > 200 %}...{% endif %}</p>
+                </div>
+                {% endif %}
+
+                {% if application.notes %}
+                <div class="notes">
+                    <h4>Your Notes</h4>
+                    <p>{{ application.notes }}</p>
+                </div>
+                {% endif %}
+
+                <div class="application-actions">
+                    <a href="{{ url_for('view_application', application_id=application.id) }}" class="btn btn-primary">View Details</a>
+                    {% if application.status == 'new' %}
+                        <button class="btn btn-success" onclick="showScheduleForm({{ application.id }})">Schedule Interview</button>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Status Update Form -->
+                <div class="quick-update-form" id="quick-update-{{ application.id }}" style="display: none;">
+                    <form action="{{ url_for('update_application_status', application_id=application.id) }}" method="POST">
+                        <div class="form-group">
+                            <label for="status-{{ application.id }}">Update Status:</label>
+                            <select name="status" id="status-{{ application.id }}" required>
+                                <option value="new" {% if application.status == 'new' %}selected{% endif %}>New</option>
+                                <option value="reviewing" {% if application.status == 'reviewing' %}selected{% endif %}>Reviewing</option>
+                                <option value="shortlisted" {% if application.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="hired" {% if application.status == 'hired' %}selected{% endif %}>Hired</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating-{{ application.id }}">Rating (1-5):</label>
+                            <select name="rating" id="rating-{{ application.id }}">
+                                <option value="">No rating</option>
+                                <option value="1">1 ⭐</option>
+                                <option value="2">2 ⭐⭐</option>
+                                <option value="3">3 ⭐⭐⭐</option>
+                                <option value="4">4 ⭐⭐⭐⭐</option>
+                                <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes-{{ application.id }}">Notes:</label>
+                            <textarea name="notes" id="notes-{{ application.id }}" rows="3" placeholder="Add your notes about this candidate...">{{ application.notes or '' }}</textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideQuickUpdate({{ application.id }})">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No Applications Yet</h3>
+            <p>Applications for your jobs will appear here once candidates start applying.</p>
+            <a href="{{ url_for('post_job') }}" class="btn btn-primary">Post a New Job</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: #7f8c8d;
+    font-size: 18px;
+}
+
+.applications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.application-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e8ed;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.application-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.application-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.applicant-info h3 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+    font-size: 18px;
+}
+
+.job-title {
+    color: #3498db;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.email {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 14px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-new { background: #e3f2fd; color: #1976d2; }
+.status-reviewing { background: #fff3e0; color: #f57c00; }
+.status-shortlisted { background: #e8f5e8; color: #388e3c; }
+.status-rejected { background: #ffebee; color: #d32f2f; }
+.status-hired { background: #e8f5e8; color: #2e7d32; }
+
+.application-details {
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.label {
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.value {
+    color: #2c3e50;
+}
+
+.cover-letter, .notes {
+    margin-bottom: 15px;
+}
+
+.cover-letter h4, .notes h4 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.cover-letter p, .notes p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.application-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #229954;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.quick-update-form {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px solid #e1e8ed;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.form-group select, .form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .applications-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .application-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .application-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+function showScheduleForm(applicationId) {
+    // Redirect to schedule interview page
+    window.location.href = `/schedule_interview/${applicationId}`;
+}
+
+function hideQuickUpdate(applicationId) {
+    document.getElementById(`quick-update-${applicationId}`).style.display = 'none';
+}
+
+// Show quick update form when clicking on status badge
+document.addEventListener('DOMContentLoaded', function() {
+    const statusBadges = document.querySelectorAll('.status-badge');
+    statusBadges.forEach(badge => {
+        badge.addEventListener('click', function() {
+            const applicationCard = this.closest('.application-card');
+            const applicationId = applicationCard.querySelector('.btn').href.split('/').pop();
+            const quickUpdateForm = document.getElementById(`quick-update-${applicationId}`);
+            quickUpdateForm.style.display = quickUpdateForm.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

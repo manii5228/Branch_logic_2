@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .insight-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+        transition: box-shadow 0.2s;
+    }
+    .insight-card:hover {
+        box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    }
+    .insight-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .insight-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .insight-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.7rem 0.5rem;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 1.08rem;
+    }
+    .insight-list li:last-child {
+        border-bottom: none;
+    }
+    .insight-badge {
+        font-size: 0.95rem;
+        background: #e0e7ff;
+        color: #3730a3;
+        border-radius: 12px;
+        padding: 0.3rem 0.9rem;
+        font-weight: 500;
+    }
+    .insight-badge-success {
+        background: #d1fae5;
+        color: #047857;
+    }
+    .insight-icon {
+        font-size: 1.3rem;
+        color: #6366f1;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Career Insights</h2>
+        <p class="text-muted">Explore live job market trends and discover where the opportunities are.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="insight-card">
+                <div class="insight-title"><span class="insight-icon">💼</span> Top 5 Job Titles</div>
+                <ul class="insight-list">
+                    {% for title, count in top_titles %}
+                        <li>{{ title }} <span class="insight-badge">{{ count }}</span></li>
+                    {% else %}
+                        <li>No data available.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="insight-card">
+                <div class="insight-title"><span class="insight-icon">📍</span> Top 5 Locations</div>
+                <ul class="insight-list">
+                    {% for location, count in top_locations %}
+                        <li>{{ location }} <span class="insight-badge insight-badge-success">{{ count }}</span></li>
+                    {% else %}
+                        <li>No data available.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

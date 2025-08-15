@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}BranchLogic Blog{% endblock %}
+{% block content %}
+<style>
+    .blog-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .blog-card:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 8px 32px rgba(37,99,235,0.13);
+        border-color: #2563eb;
+    }
+</style>
+<section class="blog-section" style="background: #f8fafc; padding: 4rem 0;">
+    <div class="container">
+        <div class="section-header" style="text-align:center; margin-bottom:2.5rem;">
+            <h2 class="section-title" style="font-size:2.5rem; color:#1f2937; margin-bottom:1rem;">BranchLogic Blog</h2>
+            <p class="section-subtitle" style="font-size:1.1rem; color:#6b7280; max-width:600px; margin:0 auto;">Insights, tips, and stories for job seekers and employers. Stay updated with the latest trends and advice in the world of careers and hiring.</p>
+            {% if current_user.is_authenticated and got_job_at_branchlogic %}
+            <div style="margin: 2rem 0;">
+                <a href="{{ url_for('create_blog') }}" class="btn btn-primary" style="background:#2563eb; color:white; padding:0.7rem 2.2rem; border-radius:8px; font-weight:600; text-decoration:none; font-size:1.1rem;">Create a Blog</a>
+            </div>
+            {% endif %}
+        </div>
+    <div class="blog-grid" style="display:flex; flex-wrap:wrap; gap:2rem; max-width:1200px; margin:0 auto; justify-content:center;">
+            {% set blogs = [
+                {'title':'How to Stand Out in Your Job Search','author':'Admin','date':'Aug 2025','category':'Career Tips','desc':'Discover actionable strategies to make your job application shine and impress recruiters in a competitive market.'},
+                {'title':'Top Skills Employers Look For in 2025','author':'Team BranchLogic','date':'Jul 2025','category':'Hiring Trends','desc':'Explore the most in-demand skills and how you can develop them to boost your employability this year.'},
+                {'title':'Remote Work: Building a Productive Home Office','author':'Guest Author','date':'Jun 2025','category':'Remote Work','desc':'Tips and tricks to create a workspace at home that keeps you motivated, focused, and healthy.'},
+                {'title':'Mastering the Interview: Tips for Success','author':'HR Expert','date':'May 2025','category':'Interviews','desc':'Ace your next interview with these proven techniques and confidence boosters.'},
+                {'title':'Resume Mistakes to Avoid','author':'Recruiter','date':'Apr 2025','category':'Resumes','desc':'Common resume pitfalls and how to fix them for better job opportunities.'},
+                {'title':'Networking for Career Growth','author':'Career Coach','date':'Mar 2025','category':'Networking','desc':'Build meaningful connections that can help you land your dream job.'},
+                {'title':'The Future of Work: Trends to Watch','author':'Industry Analyst','date':'Feb 2025','category':'Trends','desc':'Stay ahead of the curve with insights into the evolving job market.'},
+                {'title':'Balancing Work and Life','author':'Wellness Expert','date':'Jan 2025','category':'Wellness','desc':'Strategies for maintaining a healthy work-life balance in a busy world.'},
+                {'title':'How to Negotiate Your Salary','author':'Finance Advisor','date':'Dec 2024','category':'Salary','desc':'Get the pay you deserve with these negotiation tips.'},
+                {'title':'Building Your Personal Brand Online','author':'Brand Strategist','date':'Nov 2024','category':'Branding','desc':'Leverage social media and online tools to stand out professionally.'},
+                {'title':'Landing Your First Internship','author':'Student Mentor','date':'Oct 2024','category':'Internships','desc':'A step-by-step guide to securing valuable internship experience.'},
+                {'title':'Job Search During a Recession','author':'Economist','date':'Sep 2024','category':'Economy','desc':'How to adapt your job search strategy in tough economic times.'}
+            ] %}
+            {% for blog in blogs %}
+            <div class="blog-card" style="background:white; border-radius:15px; box-shadow:0 4px 12px rgba(0,0,0,0.06); padding:2rem; border:1px solid #e5e7eb; display:flex; flex-direction:column; width:340px; min-height:340px; max-width:100%; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer;">
+                <a href="#" style="text-decoration:none; color:inherit;"><h3 style="font-size:1.3rem; font-weight:700; margin-bottom:0.7rem;">{{ blog.title }}</h3></a>
+                <div style="color:#6b7280; font-size:0.95rem; margin-bottom:0.7rem;">by {{ blog.author }} | {{ blog.date }} | {{ blog.category }}</div>
+                <p style="color:#374151; font-size:1rem; flex:1;">{{ blog.desc }}</p>
+                <a href="#" style="color:#2563eb; font-weight:500; margin-top:1rem;">Read More →</a>
+            </div>
+            {% endfor %}
+    </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Interviews - BranchLogic{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>📅 Interviews</h1>
+        <p>Manage your scheduled interviews</p>
+    </div>
+
+    {% if interviews %}
+        <div class="interviews-grid">
+            {% for interview in interviews %}
+            <div class="interview-card">
+                <div class="interview-header">
+                    <div class="interview-info">
+                        <h3>{{ interview.job.title }}</h3>
+                        <p class="candidate-name">
+                            {% if current_user.role == 'employer' %}
+                                {{ interview.applicant.display_name }}
+                            {% else %}
+                                {{ interview.job.company }}
+                            {% endif %}
+                        </p>
+                        <p class="interview-time">
+                            {{ interview.scheduled_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </p>
+                    </div>
+                    <div class="status-badge status-{{ interview.status }}">
+                        {{ interview.status|title }}
+                    </div>
+                </div>
+                
+                <div class="interview-details">
+                    <div class="detail-row">
+                        <div class="detail-item">
+                            <span class="label">Duration:</span>
+                            <span class="value">{{ interview.duration }} minutes</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Type:</span>
+                            <span class="value">{{ interview.interview_type|title }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if interview.location %}
+                    <div class="detail-item">
+                        <span class="label">Location:</span>
+                        <span class="value">{{ interview.location }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if interview.meeting_link %}
+                    <div class="detail-item">
+                        <span class="label">Meeting Link:</span>
+                        <a href="{{ interview.meeting_link }}" target="_blank" class="value link">Join Meeting</a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if interview.notes %}
+                    <div class="detail-item">
+                        <span class="label">Notes:</span>
+                        <span class="value">{{ interview.notes }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="interview-actions">
+                    {% if interview.status == 'scheduled' %}
+                        {% if current_user.role == 'employer' %}
+                            <button class="btn btn-success" onclick="updateStatus({{ interview.id }}, 'completed')">Mark Complete</button>
+                            <button class="btn btn-warning" onclick="updateStatus({{ interview.id }}, 'rescheduled')">Reschedule</button>
+                        {% else %}
+                            <button class="btn btn-success" onclick="updateStatus({{ interview.id }}, 'completed')">Mark Complete</button>
+                        {% endif %}
+                    {% elif interview.status == 'completed' %}
+                        <button class="btn btn-primary" onclick="showNotesForm({{ interview.id }})">Add Notes</button>
+                    {% endif %}
+                    
+                    {% if interview.status == 'scheduled' %}
+                        <button class="btn btn-danger" onclick="updateStatus({{ interview.id }}, 'cancelled')">Cancel</button>
+                    {% endif %}
+                </div>
+
+                <!-- Notes Update Form -->
+                <div class="notes-form" id="notes-form-{{ interview.id }}" style="display: none;">
+                    <form action="{{ url_for('update_interview_status', interview_id=interview.id) }}" method="POST">
+                        <div class="form-group">
+                            <label for="notes-{{ interview.id }}">Interview Notes:</label>
+                            <textarea name="notes" id="notes-{{ interview.id }}" rows="4" 
+                                      placeholder="Add your notes about the interview...">{{ interview.notes or '' }}</textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Notes</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideNotesForm({{ interview.id }})">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>No Interviews Scheduled</h3>
+            <p>
+                {% if current_user.role == 'employer' %}
+                    You haven't scheduled any interviews yet. Review applications and schedule interviews to get started.
+                {% else %}
+                    You don't have any interviews scheduled yet. Keep applying to jobs to get interview opportunities.
+                {% endif %}
+            </p>
+            {% if current_user.role == 'employer' %}
+                <a href="{{ url_for('applications') }}" class="btn btn-primary">Review Applications</a>
+            {% else %}
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary">Browse Jobs</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: #7f8c8d;
+    font-size: 18px;
+}
+
+.interviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 20px;
+}
+
+.interview-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e8ed;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.interview-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.interview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.interview-info h3 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 20px;
+}
+
+.candidate-name {
+    color: #3498db;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    font-size: 16px;
+}
+
+.interview-time {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 14px;
+}
+
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-scheduled { background: #e3f2fd; color: #1976d2; }
+.status-completed { background: #e8f5e8; color: #388e3c; }
+.status-cancelled { background: #ffebee; color: #d32f2f; }
+.status-rescheduled { background: #fff3e0; color: #f57c00; }
+
+.interview-details {
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.label {
+    font-weight: 600;
+    color: #7f8c8d;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.value {
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.value.link {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.value.link:hover {
+    text-decoration: underline;
+}
+
+.interview-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #229954;
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.notes-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #e1e8ed;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e1e8ed;
+    border-radius: 6px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 16px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .interviews-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .interview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .detail-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .interview-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+
+<script>
+function updateStatus(interviewId, status) {
+    if (confirm(`Are you sure you want to mark this interview as ${status}?`)) {
+        // Create a form to submit the status update
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/interview/${interviewId}/update`;
+        
+        const statusInput = document.createElement('input');
+        statusInput.type = 'hidden';
+        statusInput.name = 'status';
+        statusInput.value = status;
+        
+        form.appendChild(statusInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function showNotesForm(interviewId) {
+    document.getElementById(`notes-form-${interviewId}`).style.display = 'block';
+}
+
+function hideNotesForm(interviewId) {
+    document.getElementById(`notes-form-${interviewId}`).style.display = 'none';
+}
+</script>
+{% endblock %}

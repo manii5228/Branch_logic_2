@@ -1,0 +1,567 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - BranchLogic{% endblock %}
+
+{% block content %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+    }
+
+    .profile-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .profile-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .profile-content {
+        padding: 3rem 0;
+    }
+
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 3rem;
+    }
+
+    .profile-form {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .form-title {
+        font-size: 1.75rem;
+        color: #1f2937;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        color: #374151;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background: #f9fafb;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-select {
+        background: white;
+        cursor: pointer;
+    }
+
+    .form-help {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 2rem;
+        border-top: 2px solid #f3f4f6;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-2px);
+    }
+
+    .profile-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 600;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-role {
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+        text-transform: capitalize;
+        font-size: 1.1rem;
+    }
+
+    .profile-email {
+        color: #2563eb;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2563eb;
+        display: block;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .profile-btn {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .profile-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .profile-btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .profile-btn-outline {
+        background: transparent;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+    }
+
+    .profile-btn-outline:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .profile-btn-danger {
+        background: transparent;
+        color: #ef4444;
+        border: 2px solid #ef4444;
+    }
+
+    .profile-btn-danger:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    .completion-status {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .completion-status h4 {
+        color: #0369a1;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .completion-bar {
+        background: #e2e8f0;
+        border-radius: 10px;
+        height: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .completion-fill {
+        background: linear-gradient(90deg, #10b981, #059669);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+
+    .completion-text {
+        color: #0369a1;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .profile-tips {
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .profile-tips h4 {
+        color: #92400e;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .profile-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .profile-tips li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #fbbf24;
+        position: relative;
+        padding-left: 1.5rem;
+        color: #92400e;
+        font-size: 0.9rem;
+    }
+
+    .profile-tips li:before {
+        content: "💡";
+        position: absolute;
+        left: 0;
+    }
+
+    .profile-tips li:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 1024px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .profile-sidebar {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-form {
+            padding: 2rem;
+            margin: 1rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .profile-header h1 {
+            font-size: 2rem;
+        }
+        
+        .profile-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Profile Header -->
+<section class="profile-header">
+    <div class="container">
+        <h1>Your Profile</h1>
+        <p>Manage your personal information and preferences</p>
+    </div>
+</section>
+
+<!-- Profile Content -->
+<section class="profile-content">
+    <div class="container">
+        <div class="profile-container">
+            <!-- Profile Form -->
+            <div class="profile-form">
+                <h2 class="form-title">Edit Profile</h2>
+                
+                <form method="POST">
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">Personal Information</h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="first_name" class="form-label">First Name *</label>
+                                <input type="text" id="first_name" name="first_name" class="form-input" value="{{ current_user.first_name }}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="last_name" class="form-label">Last Name *</label>
+                                <input type="text" id="last_name" name="last_name" class="form-input" value="{{ current_user.last_name }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" class="form-input" value="{{ current_user.email }}" readonly>
+                            <div class="form-help">Email address cannot be changed. Contact support if you need to update it.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" id="location" name="location" class="form-input" value="{{ current_user.location or '' }}" placeholder="e.g., San Francisco, CA">
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">Professional Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea id="bio" name="bio" class="form-input form-textarea" placeholder="Tell us about yourself, your experience, and what you're looking for...">{{ current_user.bio or '' }}</textarea>
+                            <div class="form-help">A compelling bio helps employers understand your background and interests.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="skills" class="form-label">Skills</label>
+                            <textarea id="skills" name="skills" class="form-input form-textarea" placeholder="List your key skills, separated by commas...">{{ current_user.skills or '' }}</textarea>
+                            <div class="form-help">List your technical skills, soft skills, and any certifications you have.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="experience" class="form-label">Work Experience</label>
+                            <textarea id="experience" name="experience" class="form-input form-textarea" placeholder="Briefly describe your work experience and key achievements...">{{ current_user.experience or '' }}</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="education" class="form-label">Education</label>
+                            <textarea id="education" name="education" class="form-input form-textarea" placeholder="List your educational background, degrees, and relevant coursework...">{{ current_user.education or '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Online Presence -->
+                    <div class="form-section">
+                        <h3 class="section-title">Online Presence</h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="website" class="form-label">Personal Website</label>
+                                <input type="url" id="website" name="website" class="form-input" value="{{ current_user.website or '' }}" placeholder="https://your-website.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                                <input type="url" id="linkedin" name="linkedin" class="form-input" value="{{ current_user.linkedin or '' }}" placeholder="https://linkedin.com/in/your-profile">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="github" class="form-label">GitHub Profile</label>
+                            <input type="url" id="github" name="github" class="form-input" value="{{ current_user.github or '' }}" placeholder="https://github.com/your-username">
+                            <div class="form-help">GitHub profile is especially important for technical roles.</div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Profile Sidebar -->
+            <div class="profile-sidebar">
+                <!-- Profile Card -->
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                    </div>
+                    <h3 class="profile-name">{{ current_user.first_name }} {{ current_user.last_name }}</h3>
+                    <p class="profile-role">{{ current_user.role }}</p>
+                    <p class="profile-email">{{ current_user.email }}</p>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">
+                                {% if current_user.role == 'employer' %}
+                                    {{ current_user.jobs|length if current_user.jobs else 0 }}
+                                {% else %}
+                                    {{ current_user.applications|length if current_user.applications else 0 }}
+                                {% endif %}
+                            </span>
+                            <span class="stat-label">
+                                {% if current_user.role == 'employer' %}Jobs{% else %}Applications{% endif %}
+                            </span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">
+                                {% if current_user.profile_complete %}100%{% else %}0%{% endif %}
+                            </span>
+                            <span class="stat-label">Complete</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <a href="{{ url_for('dashboard') }}" class="profile-btn profile-btn-primary">Dashboard</a>
+                        <a href="{{ url_for('change_password') }}" class="profile-btn profile-btn-outline">Change Password</a>Password</a>
+                        {% if current_user.role == 'employer' %}
+                            <a href="{{ url_for('post_job') }}" class="profile-btn profile-btn-outline">Post Job</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Profile Completion -->
+                <div class="completion-status">
+                    <h4>Profile Completion</h4>
+                    <div class="completion-bar">
+                        <div class="completion-fill" style="width: {% if current_user.profile_complete %}100%{% else %}25%{% endif %};"></div>
+                    </div>
+                    <p class="completion-text">
+                        {% if current_user.profile_complete %}
+                            🎉 Your profile is complete!
+                        {% else %}
+                            Complete your profile to increase your chances
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Profile Tips -->
+                <div class="profile-tips">
+                    <h4>💡 Profile Tips</h4>
+                    <ul>
+                        <li>Add a professional photo</li>
+                        <li>Write a compelling bio</li>
+                        <li>List your key skills</li>
+                        <li>Include relevant links</li>
+                        <li>Keep information updated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

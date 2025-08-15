@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Application Details</h2>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ application.job_title }}</h5>
+            <p class="card-text"><strong>Status:</strong> {{ application.status|capitalize }}</p>
+            <p class="card-text"><strong>Applicant Name:</strong> {{ application.applicant_name }}</p>
+            <p class="card-text"><strong>Applicant Email:</strong> {{ application.applicant_email }}</p>
+            {% if application.cover_letter %}
+            <p class="card-text"><strong>Cover Letter:</strong><br>{{ application.cover_letter }}</p>
+            {% endif %}
+            {% if application.resume %}
+            <p class="card-text"><strong>Resume:</strong> <a href="/uploads/{{ application.resume }}" target="_blank">Download</a></p>
+            {% endif %}
+            <p class="card-text"><strong>Applied At:</strong> {{ application.applied_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% if application.notes %}
+            <p class="card-text"><strong>Employer Notes:</strong><br>{{ application.notes }}</p>
+            {% endif %}
+            {% if application.rating %}
+            <p class="card-text"><strong>Rating:</strong> {{ application.rating }}/5</p>
+            {% endif %}
+        </div>
+    </div>
+    <a href="{{ url_for('applications') }}" class="btn btn-secondary">Back to Applications</a>
+</div>
+{% endblock %}

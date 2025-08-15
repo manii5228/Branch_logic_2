@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Jobs - BranchLogic{% endblock %}
+
+{% block content %}
+<style>
+    .jobs-header {
+        background: #fff;
+        color: #22223b;
+        padding: 3rem 0 2.5rem 0;
+        text-align: center;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    }
+
+    .jobs-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #22223b;
+        letter-spacing: -1px;
+        font-weight: 700;
+    }
+
+    .jobs-header p {
+        font-size: 1.1rem;
+        opacity: 0.85;
+        color: #4a4e69;
+        font-weight: 400;
+    }
+
+    .filters-section {
+        background: white;
+        padding: 2rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+
+    .filter-input {
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .filter-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .filter-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .filter-checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .filter-btn {
+        background: #2563eb;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .filter-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .jobs-content {
+        padding: 3rem 0;
+    }
+
+    .jobs-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .jobs-count {
+        font-weight: 500;
+        color: #374151;
+    }
+
+    .sort-select {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+    }
+
+    .job-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+
+    .job-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .job-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-company {
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .urgent-badge {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .job-details {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .job-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .job-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .job-tag {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .job-description {
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .job-meta {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .job-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+    }
+
+    .btn-outline:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .no-jobs {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+
+    .no-jobs h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #374151;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+    }
+
+    .page-link {
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #374151;
+        transition: all 0.3s;
+    }
+
+    .page-link:hover {
+        background: #f3f4f6;
+    }
+
+    .page-link.active {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+    @media (max-width: 768px) {
+        .filters-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .jobs-stats {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .job-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .job-footer {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+    }
+</style>
+
+<!-- Jobs Header -->
+
+<section class="jobs-header">
+    <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2.5rem;">
+        <div style="flex: 1 1 340px; min-width: 260px; max-width: 500px; text-align: left;">
+            <h1>Browse Jobs</h1>
+            <p>Find the perfect opportunity that matches your skills and career goals</p>
+        </div>
+        <div style="flex: 1 1 340px; min-width: 260px; max-width: 420px; display: flex; justify-content: center;">
+            <img src="{{ url_for('static', filename='images/01.jpg') }}" alt="Professional Teamwork" style="width: 100%; max-width: 400px; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); object-fit: cover;">
+        </div>
+    </div>
+</section>
+
+
+<!-- Jobs & Filters Layout -->
+
+<!-- Search Bar at Top -->
+<section class="filters-section">
+    <div class="container">
+        <form method="GET" style="display: flex; gap: 1rem; align-items: flex-end; justify-content: center;">
+            <div style="flex: 1 1 700px; max-width: 900px;">
+                <label class="filter-label" style="font-size: 1.1rem;">Job Title or Company</label>
+                <input type="text" name="q" placeholder="e.g., Frontend Developer" class="filter-input" style="width: 100%; font-size: 1.2rem; padding: 1.25rem; border-radius: 14px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);" value="{{ search_query }}">
+            </div>
+            <div>
+                <button type="submit" class="filter-btn" style="height: 52px; font-size: 1.1rem; border-radius: 14px;">Search</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Jobs & Filters Layout -->
+<section class="jobs-content">
+    <div class="container" style="display: flex; flex-direction: row-reverse; gap: 2.5rem; align-items: flex-start;">
+        <!-- Filters Sidebar -->
+        <aside style="width: 270px; min-width: 220px;">
+            <form method="GET" class="filters-form" style="display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 2rem 1.5rem; border: 1px solid #e5e7eb;">
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <input type="text" name="location" placeholder="e.g., San Francisco" class="filter-input" value="{{ location }}">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Category</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; justify-content: space-between;">
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="" {% if not category %}checked{% endif %}>
+                            All Categories
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="technology" {% if category == 'technology' %}checked{% endif %}>
+                            Technology
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="design" {% if category == 'design' %}checked{% endif %}>
+                            Design
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="marketing" {% if category == 'marketing' %}checked{% endif %}>
+                            Marketing
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="sales" {% if category == 'sales' %}checked{% endif %}>
+                            Sales
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="finance" {% if category == 'finance' %}checked{% endif %}>
+                            Finance
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="healthcare" {% if category == 'healthcare' %}checked{% endif %}>
+                            Healthcare
+                        </label>
+                        <label style="flex: 1 1 45%; min-width: 120px; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+                            <input type="radio" name="category" value="education" {% if category == 'education' %}checked{% endif %}>
+                            Education
+                        </label>
+                    </div>
+                </div>
+                <div class="filter-group" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; width: 100%;">
+                    <label class="filter-label" style="margin-bottom: 0.5rem;">Job Type</label>
+                    <select name="job_type" class="filter-input" style="width: 100%; max-width: 220px;">
+                        <option value="">All Types</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Internship">Internship</option>
+                    </select>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; max-width: 220px;">
+                        <input type="checkbox" name="remote" id="remote" {% if remote %}checked{% endif %}>
+                        <label for="remote" style="margin: 0 0 0 0.5rem;">Remote only</label>
+                    </div>
+                    <button type="submit" class="filter-btn" style="margin-top: 1rem; width: 100%; max-width: 220px;">Apply Filters</button>
+                </div>
+            </form>
+        </aside>
+
+        <!-- Jobs List & Stats -->
+        <div style="flex: 1 1 0; min-width: 0;">
+            <div class="jobs-stats">
+                <div class="jobs-count">
+                    {% if jobs %}
+                        {{ jobs|length }} job{{ 's' if jobs|length != 1 else '' }} found
+                    {% else %}
+                        No jobs found
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="sort" style="margin-right: 0.5rem;">Sort by:</label>
+                    <select id="sort" class="sort-select" onchange="this.form.submit()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="salary_high">Salary: High to Low</option>
+                        <option value="salary_low">Salary: Low to High</option>
+                    </select>
+                </div>
+            </div>
+
+            {% if jobs %}
+                <div class="jobs-list">
+                    {% for job in jobs %}
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">{{ job.title }}</h3>
+                                <p class="job-company">{{ job.company }}</p>
+                            </div>
+                            {% if job.urgent %}
+                            <span class="urgent-badge">Urgent</span>
+                            {% endif %}
+                        </div>
+                        <div class="job-details">
+                            <span class="job-detail">📍 {{ job.location }}</span>
+                            <span class="job-detail">💼 {{ job.job_type }}</span>
+                            {% if job.remote %}
+                            <span class="job-detail">🏠 Remote</span>
+                            {% endif %}
+                            {% if job.salary %}
+                            <span class="job-detail">💰 {{ job.salary }}</span>
+                            {% endif %}
+                        </div>
+                        {% if job.tags %}
+                        <div class="job-tags">
+                            {% for tag in job.tags.split(',') %}
+                            <span class="job-tag">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if job.description %}
+                        <p class="job-description">{{ job.description }}</p>
+                        {% endif %}
+                        <div class="job-footer">
+                            <div class="job-meta">
+                                Posted {{ job.posted_at.strftime('%b %d, %Y') }} • {{ job.applications_count }} application{{ 's' if job.applications_count != 1 else '' }}
+                            </div>
+                            <div class="job-actions" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-outline" style="min-width: 120px; text-align: center;">View Details</a>
+                                {% if current_user.is_authenticated %}
+                                    {% if current_user.role == 'jobseeker' %}
+                                        <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary" style="min-width: 120px; text-align: center;">Apply Now</a>
+                                        <form action="{{ url_for('save_job', job_id=job.id) }}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-outline" style="min-width: 120px; text-align: center;">Save Job</button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-primary" style="min-width: 120px; text-align: center;">Login to Apply</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-jobs">
+                    <h3>No jobs found</h3>
+                    <p>Try adjusting your search criteria or browse all available jobs.</p>
+                    <a href="{{ url_for('jobs') }}" class="btn btn-primary" style="margin-top: 1rem;">Browse All Jobs</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Jobs Content -->
+<section class="jobs-content">
+    <div class="container">
+        <div class="jobs-stats">
+            <div class="jobs-count">
+                {% if jobs %}
+                    {{ jobs|length }} job{{ 's' if jobs|length != 1 else '' }} found
+                {% else %}
+                    No jobs found
+                {% endif %}
+            </div>
+            
+            <div>
+                <label for="sort" style="margin-right: 0.5rem;">Sort by:</label>
+                <select id="sort" class="sort-select" onchange="this.form.submit()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="salary_high">Salary: High to Low</option>
+                    <option value="salary_low">Salary: Low to High</option>
+                </select>
+            </div>
+        </div>
+
+        {% if jobs %}
+            <div class="jobs-list">
+                {% for job in jobs %}
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">{{ job.title }}</h3>
+                            <p class="job-company">{{ job.company }}</p>
+                        </div>
+                        {% if job.urgent %}
+                        <span class="urgent-badge">Urgent</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="job-details">
+                        <span class="job-detail">📍 {{ job.location }}</span>
+                        <span class="job-detail">💼 {{ job.job_type }}</span>
+                        {% if job.remote %}
+                        <span class="job-detail">🏠 Remote</span>
+                        {% endif %}
+                        {% if job.salary %}
+                        <span class="job-detail">💰 {{ job.salary }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if job.tags %}
+                    <div class="job-tags">
+                        {% for tag in job.tags.split(',') %}
+                        <span class="job-tag">{{ tag.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if job.description %}
+                    <p class="job-description">{{ job.description }}</p>
+                    {% endif %}
+                    
+                    <div class="job-footer">
+                        <div class="job-meta">
+                            Posted {{ job.posted_at.strftime('%b %d, %Y') }} • {{ job.applications_count }} application{{ 's' if job.applications_count != 1 else '' }}
+                        </div>
+                        
+                        <div class="job-actions">
+                                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-outline">View Details</a>
+                                {% if current_user.is_authenticated %}
+                                    {% if current_user.role == 'jobseeker' %}
+                                        <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary">Apply Now</a>
+                                        <form action="{{ url_for('save_job', job_id=job.id) }}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-outline" style="margin-left: 0.5rem;">Save Job</button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Apply</a>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-jobs">
+                <h3>No jobs found</h3>
+                <p>Try adjusting your search criteria or browse all available jobs.</p>
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary" style="margin-top: 1rem;">Browse All Jobs</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
